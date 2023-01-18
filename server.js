@@ -2,6 +2,7 @@ require("express-async-errors");
 require("dotenv").config();
 const express = require("express");
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
 const connectDB = require("./db/connectDB");
 const errorHandler = require("./middleware/errorHandler");
 const notFoundHandler = require("./middleware/notFoundHandler");
@@ -12,6 +13,12 @@ const articleRouter = require("./routes/articles");
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.use(
+  cors({
+    credentials: true,
+    origin: (origin, callback) => callback(null, true),
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 
