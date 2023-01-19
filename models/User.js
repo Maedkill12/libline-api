@@ -25,6 +25,14 @@ const UserSchema = new mongoose.Schema(
       required: [true, "Password must be provided"],
       minlength: 8,
     },
+    photoURL: {
+      type: String,
+      match: [
+        /\.(jpe?g|png|gif|bmp|webp)$/i,
+        "Please provide a an URL for an image",
+      ],
+      required: false,
+    },
   },
   { timestamps: true }
 );
