@@ -9,7 +9,12 @@ const authorization = (req, res, next) => {
     );
   }
   token = token.split(" ")[1];
-  const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+  let user;
+  try {
+    user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+  } catch (error) {
+    throw new AuthenticationError("Access token has expired");
+  }
   req.userId = user.userId;
   next();
 };

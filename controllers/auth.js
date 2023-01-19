@@ -35,21 +35,30 @@ const login = async (req, res) => {
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
-  res.status(StatusCodes.OK).json({ success: true, accessToken });
+  res
+    .status(StatusCodes.OK)
+    .json({ success: true, accessToken, userId: user._id });
 };
 
 const refresh = async (req, res) => {
   const { refreshToken } = req.cookies;
   if (!refreshToken) {
-    throw new ForbiddenError("Invalid refresh token");
+    throw new ForbiddenError("Refresh token is empty");
   }
-  const data = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+  let data;
+  try {
+    data = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+  } catch (error) {
+    throw new AuthenticationError("Refresh token has expired");
+  }
   const user = await User.findOne({ _id: data.userId });
   if (!user) {
     throw new NotFoundItemError(`Not found user with id : ${userId}`);
   }
   const accessToken = user.createAccessToken();
-  res.status(StatusCodes.OK).json({ success: true, accessToken });
+  res
+    .status(StatusCodes.OK)
+    .json({ success: true, accessToken, userId: user._id });
 };
 
 const logout = async (req, res) => {
