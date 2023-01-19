@@ -7,8 +7,8 @@ const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 
 const register = async (req, res) => {
-  const { username, email, password } = req.body;
-  await User.create({ username, email, password });
+  const { username, email, password, photoURL } = req.body;
+  await User.create({ username, email, password, photoURL });
   res.status(StatusCodes.CREATED).json({ success: true });
 };
 
@@ -37,7 +37,7 @@ const login = async (req, res) => {
 
   res
     .status(StatusCodes.OK)
-    .json({ success: true, accessToken, userId: user._id });
+    .json({ success: true, accessToken, username: user.username });
 };
 
 const refresh = async (req, res) => {
@@ -58,7 +58,7 @@ const refresh = async (req, res) => {
   const accessToken = user.createAccessToken();
   res
     .status(StatusCodes.OK)
-    .json({ success: true, accessToken, userId: user._id });
+    .json({ success: true, accessToken, username: user.username });
 };
 
 const logout = async (req, res) => {

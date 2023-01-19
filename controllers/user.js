@@ -7,38 +7,38 @@ const getAllUser = async (req, res) => {
   res.status(StatusCodes.OK).json({ success: true, data: users });
 };
 const getUser = async (req, res) => {
-  const { id } = req.params;
-  const user = await User.findById(id).select("-password");
+  const { username } = req.params;
+  const user = await User.findOne({ username }).select("-password");
   if (!user) {
-    throw new NotFoundItemError(`Not found user with id ${id}`);
+    throw new NotFoundItemError(`Not found user ${username}`);
   }
   res.status(StatusCodes.OK).json({ success: true, data: user });
 };
 const createUser = async (req, res) => {
-  const { username, email, password } = req.body;
-  const user = await User.create({ username, email, password });
+  const { username, email, password, photoURL } = req.body;
+  const user = await User.create({ username, email, password, photoURL });
   user.password = null;
   res.status(StatusCodes.CREATED).json({ success: true, data: user });
 };
 const updateUser = async (req, res) => {
-  const { id } = req.params;
+  const { username: userParam } = req.params;
   const { username, email, password } = req.body;
 
   const user = await User.findOneAndUpdate(
-    { _id: id },
+    { username: userParam },
     { username, email, password },
     { new: true, runValidators: true }
   ).select("-password");
   if (!user) {
-    throw new NotFoundItemError(`Not found user with id ${id}`);
+    throw new NotFoundItemError(`Not found user ${userParam}`);
   }
   res.status(StatusCodes.OK).json({ success: true, data: user });
 };
 const deleteUser = async (req, res) => {
-  const { id } = req.params;
-  const user = await User.findOneAndRemove({ _id: id }).select("-password");
+  const { username } = req.params;
+  const user = await User.findOneAndRemove({ username }).select("-password");
   if (!user) {
-    throw new NotFoundItemError(`Not found user with id ${id}`);
+    throw new NotFoundItemError(`Not found user ${username}`);
   }
   res.status(StatusCodes.OK).json({ success: true, data: user });
 };
