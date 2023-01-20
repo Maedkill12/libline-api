@@ -4,7 +4,12 @@ const Article = require("../models/Article");
 const User = require("../models/User");
 
 const getAllArticles = async (req, res) => {
-  const articles = await Article.find({});
+  const { author } = req.query;
+  const queryObject = {};
+  if (author) {
+    queryObject.author = author;
+  }
+  const articles = await Article.find(queryObject);
   res.status(StatusCodes.OK).json({ success: true, data: articles });
 };
 const getArticle = async (req, res) => {
