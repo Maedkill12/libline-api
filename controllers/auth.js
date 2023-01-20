@@ -53,7 +53,7 @@ const refresh = async (req, res) => {
   }
   const user = await User.findOne({ _id: data.userId });
   if (!user) {
-    throw new NotFoundItemError(`Not found user with id : ${userId}`);
+    throw new NotFoundItemError(`Not found user with id : ${data.userId}`);
   }
   const accessToken = user.createAccessToken();
   res

@@ -12,11 +12,11 @@ const getArticle = async (req, res) => {
 };
 const createArticle = async (req, res) => {
   const { title, author, year } = req.body;
-  const user = await User.findById(author);
+  const user = await User.findOne({ username: author });
   if (!user) {
-    throw new NotFoundItemError(`Not found username with id : ${author}`);
+    throw new NotFoundItemError(`Not found username ${author}`);
   }
-  const article = await Article.create({ title, author, year });
+  const article = await Article.create({ title, author: user._id, year });
   res.status(StatusCodes.CREATED).json({ success: true, data: article });
 };
 const updateArticle = async (req, res) => {
