@@ -22,11 +22,11 @@ const createUser = async (req, res) => {
 };
 const updateUser = async (req, res) => {
   const { username: userParam } = req.params;
-  const { username, email, password } = req.body;
+  const { username, email, password, photoURL } = req.body;
 
   const user = await User.findOneAndUpdate(
-    { username: userParam },
-    { username, email, password },
+    { username: userParam, _id: req.userId },
+    { username, email, password, photoURL },
     { new: true, runValidators: true }
   ).select("-password");
   if (!user) {
