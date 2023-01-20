@@ -37,7 +37,12 @@ const login = async (req, res) => {
 
   res
     .status(StatusCodes.OK)
-    .json({ success: true, accessToken, username: user.username });
+    .json({
+      success: true,
+      accessToken,
+      username: user.username,
+      userId: user._id,
+    });
 };
 
 const refresh = async (req, res) => {
@@ -58,7 +63,12 @@ const refresh = async (req, res) => {
   const accessToken = user.createAccessToken();
   res
     .status(StatusCodes.OK)
-    .json({ success: true, accessToken, username: user.username });
+    .json({
+      success: true,
+      accessToken,
+      username: user.username,
+      userId: user._id,
+    });
 };
 
 const logout = async (req, res) => {

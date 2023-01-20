@@ -4,12 +4,41 @@ const Article = require("../models/Article");
 const User = require("../models/User");
 
 const getAllArticles = async (req, res) => {
-  const { author } = req.query;
-  const queryObject = {};
-  if (author) {
-    queryObject.author = author;
-  }
-  const articles = await Article.find(queryObject);
+  const { username } = req.query;
+
+  const filter = username ? username : { $exists: true };
+  const articles = await Article.aggregate([
+    {
+      $lookup: {
+        from: "users",
+        localField: "author",
+        foreignField: "_id",
+        as: "user_docs",
+      },
+    },
+    {
+      $match: { "user_docs.username": filter },
+    },
+    {
+      $replaceRoot: {
+        newRoot: {
+          $mergeObjects: [{ $arrayElemAt: ["$user_docs", 0] }, "$$ROOT"],
+        },
+      },
+    },
+    {
+      $project: {
+        user_docs: 0,
+        email: 0,
+        password: 0,
+        photoURL: 0,
+        createdAt: 0,
+        updatedAt: 0,
+        __v: 0,
+      },
+    },
+  ]);
+
   res.status(StatusCodes.OK).json({ success: true, data: articles });
 };
 const getArticle = async (req, res) => {
