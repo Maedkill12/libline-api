@@ -28,10 +28,7 @@ const UserSchema = new mongoose.Schema(
     },
     photoURL: {
       type: String,
-      match: [
-        /\.(jpe?g|png|gif|bmp|webp)$/i,
-        "Please provide a an URL for an image",
-      ],
+      match: [/\.(jpe?g|png|gif|bmp|webp)$/i, "Please provide an Image URL"],
       required: false,
     },
   },

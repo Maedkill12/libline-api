@@ -39,8 +39,9 @@ const getAllArticles = async (req, res) => {
     },
   ]);
   if (limit) {
-    const skip = (page ? page : 1 - 1) * limit;
-    result = result.skip(skip).limit(limit);
+    const lim = Number(limit);
+    const skip = (page ? page : 1 - 1) * lim;
+    result = result.skip(skip).limit(lim);
   }
   const articles = await result;
   res.status(StatusCodes.OK).json({ success: true, data: articles });
@@ -57,12 +58,19 @@ const getArticle = async (req, res) => {
   res.status(StatusCodes.OK).json({ success: true, data: article });
 };
 const createArticle = async (req, res) => {
-  const { title, author, year } = req.body;
+  const { title, author, year, frontPageURL, bannerURL, docURL } = req.body;
   const user = await User.findOne({ username: author });
   if (!user) {
     throw new NotFoundItemError(`Not found username ${author}`);
   }
-  const article = await Article.create({ title, author: user._id, year });
+  const article = await Article.create({
+    title,
+    author: user._id,
+    year,
+    frontPageURL,
+    bannerURL,
+    docURL,
+  });
   res.status(StatusCodes.CREATED).json({ success: true, data: article });
 };
 const updateArticle = async (req, res) => {
