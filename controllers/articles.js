@@ -4,10 +4,10 @@ const Article = require("../models/Article");
 const User = require("../models/User");
 
 const getAllArticles = async (req, res) => {
-  const { username } = req.query;
+  const { username, limit, page } = req.query;
 
   const filter = username ? username : { $exists: true };
-  const articles = await Article.aggregate([
+  let result = Article.aggregate([
     {
       $lookup: {
         from: "users",
@@ -38,11 +38,23 @@ const getAllArticles = async (req, res) => {
       },
     },
   ]);
-
+  if (limit) {
+    const skip = (page ? page : 1 - 1) * limit;
+    result = result.skip(skip).limit(limit);
+  }
+  const articles = await result;
   res.status(StatusCodes.OK).json({ success: true, data: articles });
 };
 const getArticle = async (req, res) => {
-  res.send("Single article");
+  const { id } = req.params;
+  const article = await Article.findOne({ _id: id }).populate({
+    path: "author",
+    select: "username",
+  });
+  if (!article) {
+    throw new NotFoundItemError(`Not found article with id : ${id}`);
+  }
+  res.status(StatusCodes.OK).json({ success: true, data: article });
 };
 const createArticle = async (req, res) => {
   const { title, author, year } = req.body;
