@@ -30,8 +30,14 @@ const ArticleSchema = new mongoose.Schema(
     },
     docURL: {
       type: String,
-      required: true,
+      required: [true, "Proivde URL doc"],
       match: [/\.pdf$/i, "Please provide a valid doc"],
+    },
+    description: {
+      type: String,
+      required: [true, "Description must be provided"],
+      maxlength: 200,
+      minlength: 10,
     },
   },
   { timestamps: true }

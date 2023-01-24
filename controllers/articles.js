@@ -58,7 +58,8 @@ const getArticle = async (req, res) => {
   res.status(StatusCodes.OK).json({ success: true, data: article });
 };
 const createArticle = async (req, res) => {
-  const { title, author, year, frontPageURL, bannerURL, docURL } = req.body;
+  const { title, author, year, frontPageURL, bannerURL, docURL, description } =
+    req.body;
   const user = await User.findOne({ username: author });
   if (!user) {
     throw new NotFoundItemError(`Not found username ${author}`);
@@ -70,12 +71,14 @@ const createArticle = async (req, res) => {
     frontPageURL,
     bannerURL,
     docURL,
+    description,
   });
   res.status(StatusCodes.CREATED).json({ success: true, data: article });
 };
 const updateArticle = async (req, res) => {
   const { id } = req.params;
-  const { title, author, year } = req.body;
+  const { title, author, year, frontPageURL, bannerURL, docURL, description } =
+    req.body;
 
   if (author) {
     const user = await User.findById(author);
@@ -86,7 +89,7 @@ const updateArticle = async (req, res) => {
 
   const article = await Article.findOneAndUpdate(
     { _id: id, author: req.userId },
-    { title, author, year },
+    { title, author, year, frontPageURL, bannerURL, docURL, description },
     { new: true, runValidators: true }
   );
   if (!article) {
