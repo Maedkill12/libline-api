@@ -4,9 +4,16 @@ const Article = require("../models/Article");
 const User = require("../models/User");
 
 const getAllArticles = async (req, res) => {
-  const { username, limit, page } = req.query;
+  const { username, limit, page, title } = req.query;
 
+  const matchObject = {};
   const filter = username ? username : { $exists: true };
+
+  matchObject["user_docs.username"] = filter;
+  if (title) {
+    matchObject.title = { $regex: title, $options: "i" };
+  }
+
   let result = Article.aggregate([
     {
       $lookup: {
@@ -17,7 +24,7 @@ const getAllArticles = async (req, res) => {
       },
     },
     {
-      $match: { "user_docs.username": filter },
+      $match: matchObject,
     },
     {
       $replaceRoot: {
