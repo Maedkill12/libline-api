@@ -3,19 +3,19 @@ const NotFoundItemError = require("../erros/NotFoundItemError");
 const User = require("../models/User");
 
 const getAllUser = async (req, res) => {
-  const { limit, page, sort } = req.params;
-  let reuslt = User.find({}).select("-password");
+  const { limit, page, sort } = req.query;
+  let result = User.find({}).select("-password");
   if (sort) {
     const sortList = sort.split(",").join(" ");
-    reuslt = reuslt.sort(sortList);
+    result = result.sort(sortList);
   }
   if (limit) {
     const lim = Number(limit);
     const pag = page ? Number(page) : 1;
     const skip = (pag - 1) * lim;
-    reuslt = reuslt.skip(skip);
+    result = result.skip(skip).limit(lim);
   }
-  const users = await reuslt;
+  const users = await result;
   res.status(StatusCodes.OK).json({ success: true, data: users });
 };
 const getUser = async (req, res) => {

@@ -3,6 +3,8 @@ require("dotenv").config();
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const rateLimiter = require("express-rate-limit");
+const helmet = require("helmet");
 const connectDB = require("./db/connectDB");
 const errorHandler = require("./middleware/errorHandler");
 const notFoundHandler = require("./middleware/notFoundHandler");
@@ -13,6 +15,9 @@ const articleRouter = require("./routes/articles");
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.set("trust proxy", 1);
+app.use(rateLimiter({ windowMs: 15 * 60 * 1000, max: 100 }));
+app.use(helmet());
 app.use(
   cors({
     credentials: true,
