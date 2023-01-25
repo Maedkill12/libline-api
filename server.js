@@ -21,7 +21,11 @@ app.use(helmet());
 app.use(
   cors({
     credentials: true,
-    origin: (origin, callback) => callback(null, true),
+    origin: (origin, callback) => {
+      if (origin === "https://libline.onrender.com") {
+        callback(null, true);
+      }
+    },
   })
 );
 app.use(express.json());
