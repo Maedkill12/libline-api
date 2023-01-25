@@ -4,7 +4,7 @@ const Article = require("../models/Article");
 const User = require("../models/User");
 
 const getAllArticles = async (req, res) => {
-  const { username, limit, page, title } = req.query;
+  const { username, limit, page, title, sort } = req.query;
 
   const matchObject = {};
   const filter = username ? username : { $exists: true };
@@ -49,6 +49,10 @@ const getAllArticles = async (req, res) => {
     const lim = Number(limit);
     const skip = (page ? page : 1 - 1) * lim;
     result = result.skip(skip).limit(lim);
+  }
+  if (sort) {
+    const sortList = sort.split(",").join(" ");
+    result = result.sort(sortList);
   }
   const articles = await result;
   res.status(StatusCodes.OK).json({ success: true, data: articles });
