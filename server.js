@@ -22,7 +22,10 @@ app.use(
   cors({
     credentials: true,
     origin: (origin, callback) => {
-      if (origin === "https://libline.onrender.com") {
+      if (
+        origin === "https://libline.onrender.com" ||
+        origin === "https://libline.netlify.app"
+      ) {
         callback(null, true);
       }
     },
