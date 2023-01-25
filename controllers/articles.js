@@ -39,20 +39,20 @@ const getAllArticles = async (req, res) => {
         email: 0,
         password: 0,
         photoURL: 0,
-        createdAt: 0,
         updatedAt: 0,
         __v: 0,
       },
     },
   ]);
-  if (limit) {
-    const lim = Number(limit);
-    const skip = (page ? page : 1 - 1) * lim;
-    result = result.skip(skip).limit(lim);
-  }
   if (sort) {
     const sortList = sort.split(",").join(" ");
     result = result.sort(sortList);
+  }
+  if (limit) {
+    const lim = Number(limit);
+    const pag = page ? Number(page) : 1;
+    const skip = (pag - 1) * lim;
+    result = result.skip(skip).limit(lim);
   }
   const articles = await result;
   res.status(StatusCodes.OK).json({ success: true, data: articles });
